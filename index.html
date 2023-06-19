@@ -102,7 +102,6 @@
         const isYiddishToday = () => {
             const ydate  = new Intl.DateTimeFormat('en-u-ca-hebrew',{month:'numeric', day:'numeric'}).format(new Date());
             const jewishDate = ydate.split(' ');
-            console.log(jewishDate);
             return jewishDate[0] == 30 && jewishDate[1].toLowerCase() === 'sivan';
         }
 
@@ -134,9 +133,6 @@
 
         genText();
 
-        // set timeout to genText after 5 seconds
-
-        console.log(isYiddishToday());
 
 
         document.getElementById('age-number').innerText = age(now);
