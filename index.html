@@ -115,21 +115,29 @@
             return now.getFullYear() - bornYear;
         };
 
+        const genText = () => {
+          const letters = "Happy Birthday Tzivy!";
+          let readyText = "";
+          [...letters].forEach(letter => {
+              const color = "#"+(Math.random()*16777215|0).toString(16);
+              readyText += '<span style="color: ' + color + ';">' + letter.toUpperCase() + '</span>';
+          });
+          document.getElementsByClassName('name')[0].innerHTML = readyText;
+            setTimeout(() => {
+              genText();  
+          }, Math.random() * 100 + 1000);
+        }
+
         // check if its not yiddish or english birthday then hide the body and stop
         if (isYiddishToday() || isEnglishBirthday()) {
 
-        const letters = "Happy Birthday Tzivy!";
-        let readyText = "";
 
-        [...letters].forEach(letter => {
-            const color = "#"+(Math.random()*16777215|0).toString(16);
-            readyText += '<span style="color: ' + color + ';">' + letter.toUpperCase() + '</span>';
-        });
+        genText();
 
-        
+        // set timeout to genText after 5 seconds
+
         console.log(isYiddishToday());
 
-        document.getElementsByClassName('name')[0].innerHTML = readyText;
 
         document.getElementById('age-number').innerText = age(now);
 
