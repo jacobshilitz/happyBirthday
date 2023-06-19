@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Tzivy!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Frijole&family=Righteous&display=swap" rel="stylesheet">
+    <style>
+    * {
+    padding: 0;
+    margin: 0;
+    }
+
+        .confetti {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            user-select: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        body {
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .conatiner {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            gap: 5vh;
+        }
+
+        .name, .age {
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rebeccapurple;
+            font-family: 'Righteous', cursive;
+            text-shadow: 2px 4px 11px rgb(0 0 0 / 28%);
+            max-height: 100vh;
+            text-align: center;
+        } 
+
+        .name {
+            overflow: hidden;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: rgb(0, 0, 0); 
+            font-size: 4vw;
+            letter-spacing: 10px;
+            font-weight: 900;
+            font-family: 'Frijole', cursive;
+            border-right: .15em solid transparent;
+            white-space: nowrap; 
+            margin: 0 auto;
+            animation: 
+            typing 3.5s steps(50, end),
+            blink-caret .50s step-end;
+        }
+
+        .age  {
+            font-size: 1.5vw;
+        }
+
+        /* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100%}
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: orange }
+  50% { border-color: transparent; }
+}
+
+    </style>
+
+</head>
+
+<body>
+    <div class="conatiner">
+        <H3 class="name"></H3>
+        <h2 class="age">you are now <span id="age-number"></span></h2>
+    </div>
+
+    <canvas class="confetti" id="canvas"></canvas>
+
+    <script>
+
+        const now = new Date();
+
+        const isYiddishToday = () => {
+            const ydate  = new Intl.DateTimeFormat('en-u-ca-hebrew',{month:'numeric', day:'numeric'}).format(new Date());
+            const jewishDate = ydate.split(' ');
+            console.log(jewishDate);
+            return jewishDate[0] == 30 && jewishDate[1].toLowerCase() === 'sivan';
+        }
+
+        const isEnglishBirthday = () => {
+            return now.getDate() === 19 && now.getMonth() === 6;
+        };
+
+        const age = () => {
+            const bornYear = 2004;
+            return now.getFullYear() - bornYear;
+        };
+
+        // check if its not yiddish or english birthday then hide the body and stop
+        if (isYiddishToday() || isEnglishBirthday()) {
+
+        const letters = "Happy Birthday Tzivy!";
+        let readyText = "";
+
+        [...letters].forEach(letter => {
+            const color = "#"+(Math.random()*16777215|0).toString(16);
+            readyText += '<span style="color: ' + color + ';">' + letter.toUpperCase() + '</span>';
+        });
+
+        
+        console.log(isYiddishToday());
+
+        document.getElementsByClassName('name')[0].innerHTML = readyText;
+
+        document.getElementById('age-number').innerText = age(now);
+
+        //-----------Var Inits--------------
+        canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cx = ctx.canvas.width / 2;
+        cy = ctx.canvas.height / 2;
+
+        let confetti = [];
+        const confettiCount = 300;
+        const gravity = 0.5;
+        const terminalVelocity = 5;
+        const drag = 0.075;
+        const colors = [
+            { front: 'red', back: 'darkred' },
+            { front: 'green', back: 'darkgreen' },
+            { front: 'blue', back: 'darkblue' },
+            { front: 'yellow', back: 'darkyellow' },
+            { front: 'orange', back: 'darkorange' },
+            { front: 'pink', back: 'darkpink' },
+            { front: 'purple', back: 'darkpurple' },
+            { front: 'turquoise', back: 'darkturquoise' }];
+
+
+        //-----------Functions--------------
+        resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            cx = ctx.canvas.width / 2;
+            cy = ctx.canvas.height / 2;
+        };
+
+        randomRange = (min, max) => Math.random() * (max - min) + min;
+
+        initConfetti = () => {
+            for (let i = 0; i < confettiCount; i++) {
+                confetti.push({
+                    color: colors[Math.floor(randomRange(0, colors.length))],
+                    dimensions: {
+                        x: randomRange(10, 20),
+                        y: randomRange(10, 30)
+                    },
+
+                    position: {
+                        x: randomRange(0, canvas.width),
+                        y: canvas.height - 1
+                    },
+
+                    rotation: randomRange(0, 2 * Math.PI),
+                    scale: {
+                        x: 1,
+                        y: 1
+                    },
+
+                    velocity: {
+                        x: randomRange(-25, 25),
+                        y: randomRange(0, -50)
+                    }
+                });
+
+
+            }
+        };
+
+        //---------Render-----------
+        render = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            confetti.forEach((confetto, index) => {
+                let width = confetto.dimensions.x * confetto.scale.x;
+                let height = confetto.dimensions.y * confetto.scale.y;
+
+                // Move canvas to position and rotate
+                ctx.translate(confetto.position.x, confetto.position.y);
+                ctx.rotate(confetto.rotation);
+
+                // Apply forces to velocity
+                confetto.velocity.x -= confetto.velocity.x * drag;
+                confetto.velocity.y = Math.min(confetto.velocity.y + gravity, terminalVelocity);
+                confetto.velocity.x += Math.random() > 0.5 ? Math.random() : -Math.random();
+
+                // Set position
+                confetto.position.x += confetto.velocity.x;
+                confetto.position.y += confetto.velocity.y;
+
+                // Delete confetti when out of frame
+                if (confetto.position.y >= canvas.height) confetti.splice(index, 1);
+
+                // Loop confetto x position
+                if (confetto.position.x > canvas.width) confetto.position.x = 0;
+                if (confetto.position.x < 0) confetto.position.x = canvas.width;
+
+                // Spin confetto by scaling y
+                confetto.scale.y = Math.cos(confetto.position.y * 0.1);
+                ctx.fillStyle = confetto.scale.y > 0 ? confetto.color.front : confetto.color.back;
+
+                // Draw confetti
+                ctx.fillRect(-width / 2, -height / 2, width, height);
+
+                // Reset transform matrix
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+            });
+
+            // Fire off another round of confetti
+            if (confetti.length <= 10) initConfetti();
+
+            window.requestAnimationFrame(render);
+        };
+
+        //---------Execution--------
+        initConfetti();
+        render();
+
+        //----------Resize----------
+        window.addEventListener('resize', function () {
+            resizeCanvas();
+        });
+
+        //------------Click------------
+        window.addEventListener('click', function () {
+            initConfetti();
+        });
+    } else 
+        {
+            document.body.style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
